@@ -91,7 +91,7 @@ runTest("8 Each player is on a team", () => {
 runTest("9 Players from the same seeding list aren't on the same team", () => {
     teams.forEach((team) => {
         let player1 = team[0];
-        let player2 = team[2];
+        let player2 = team[1];
         if(
             topSeeds.includes(player1) && topSeeds.includes(player2)
             ||
