@@ -1,3 +1,5 @@
+const { teamAdjectives, teamNouns } = require("../lib/team_names.js")
+
 class Allocator {
     constructor(input) {
         this.rankedPlayers = this.rankPlayers(input);
@@ -19,27 +21,37 @@ class Allocator {
     }
 
     allocate() {
-        let teams = [[]];
+        let teams = [this.createTeam()];
         let idx = 0;
         let [topSeeds, unseeded] = [this.topSeeds.slice(), this.unseeded.slice()];
         let currentListBool = true;
 
         while(topSeeds.length > 0 || unseeded.length > 0){
-            if(teams[idx].length == 2){
+            if(teams[idx]["players"].length == 2){
                 idx += 1;
-                teams[idx] = [];
+                teams[idx] = this.createTeam();
             }
             
             let currentList = currentListBool ? topSeeds : unseeded;
             if(currentList.length > 0){
                 let randPlayer = currentList.splice(this.randomIndex(currentList), 1)[0];
-                teams[idx].push(randPlayer);
+                teams[idx]["players"].push(randPlayer);
             }
         
             currentListBool = !currentListBool;
         };
 
         return teams;
+    }
+
+    createTeam() {
+        return { name: this.generateTeamName(), players: [] };
+    }
+
+    generateTeamName() {
+        let idx1 = this.randomIndex(teamAdjectives)
+        let idx2 = this.randomIndex(teamNouns)
+        return `${teamAdjectives.splice(idx1, 1)} ${teamNouns.splice(idx2, 1)}`;
     }
 
     randomIndex(array) {
