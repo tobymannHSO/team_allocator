@@ -6,6 +6,7 @@ class Allocator {
         this.seededLists = this.splitPlayers();
         [this.topSeeds, this.unseeded] = [this.seededLists[0], this.seededLists[1]];
         this.teams = this.allocate();
+        this.teams.forEach((team) => this.calculateTeamExp(team));
     }
 
     rankPlayers(players) {
@@ -15,8 +16,8 @@ class Allocator {
     splitPlayers() {
         let players = this.rankedPlayers;
         let middle = Math.floor(players.length/2);
-        if(players.length%2 !== 0){
-            middle += 1
+        if(this.oddNumberOfPlayers()){
+            middle += 1;
         }
 
         return [players.slice(0, middle), players.slice(middle)];
@@ -28,9 +29,9 @@ class Allocator {
         let [topSeeds, unseeded] = [this.topSeeds.slice(), this.unseeded.slice()];
         let currentListBool = true;
 
-        if(this.rankedPlayers.length % 2 !== 0){
-            teams[0]["players"] = [topSeeds.splice(0,1)]
-            idx += 1
+        if(this.oddNumberOfPlayers()){
+            teams[0]["players"] = topSeeds.splice(0,1)
+            idx += 1;
             teams[idx] = this.createTeam();
         }
 
@@ -57,14 +58,22 @@ class Allocator {
     }
 
     generateTeamName() {
-        let idx1 = this.randomIndex(teamAdjectives)
-        let idx2 = this.randomIndex(teamNouns)
+        let idx1 = this.randomIndex(teamAdjectives);
+        let idx2 = this.randomIndex(teamNouns);
         return `${teamAdjectives.splice(idx1, 1)} ${teamNouns.splice(idx2, 1)}`;
+    }
+
+    calculateTeamExp(team) {
+        team["ttlExp"] = team["players"].reduce((sum, currPlayer) => sum + currPlayer["hours"], 0);
     }
 
     randomIndex(array) {
         return Math.floor(Math.random() * array.length - 1);
     }
+
+    oddNumberOfPlayers() {
+        return this.rankedPlayers.length % 2 !== 0;
+    }
 }
 
-module.exports = Allocator
+module.exports = Allocator;
