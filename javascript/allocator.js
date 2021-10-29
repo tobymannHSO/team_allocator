@@ -2,15 +2,15 @@ const { teamAdjectives, teamNouns } = require("../lib/team_names.js")
 
 class Allocator {
     constructor(input) {
-        this.rankedPlayers = this.rankPlayers(input);
+        this.rankedPlayers = this.rank(input, "hours");
         this.seededLists = this.splitPlayers();
         [this.topSeeds, this.unseeded] = [this.seededLists[0], this.seededLists[1]];
         this.teams = this.allocate();
-        this.teams.forEach((team) => this.calculateTeamExp(team));
+        this.addRuach()
     }
 
-    rankPlayers(players) {
-        return players.sort((a, b) => b["hours"] - a["hours"]);
+    rank(array, key) {
+        return array.sort((a, b) => b[key] - a[key]);
     }
 
     splitPlayers() {
@@ -50,7 +50,15 @@ class Allocator {
             currentListBool = !currentListBool;
         };
 
+        teams.forEach((team) => this.calculateTeamExp(team));
         return teams;
+    }
+
+    addRuach() {
+        this.teams = this.rank(this.teams, "ttlExp");
+        let lastTeam = this.teams[this.teams.length-1]
+        lastTeam["players"].push({ name: "Ruebik", hours: 25 });
+        this.calculateTeamExp(lastTeam)
     }
 
     createTeam() {

@@ -6,5 +6,5 @@ const teams = new Allocator(players).teams;
 teams.forEach((team) => {
     console.log("\n", team["name"])
     team["players"].forEach((player) => console.log("\t", player))
-    console.log(team["\t", "ttlExp"])
+    console.log(" \t Total hours: ", team["ttlExp"])
 })
